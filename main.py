@@ -2,7 +2,7 @@ import discord
 import os
 from discord.ext import commands
 from webserver import keep_alive
-from time import sleep
+import time
 intents = discord.Intents().all()
 intents.members = True
 bot = commands.Bot(command_prefix="]", intents=intents, activity = discord.Streaming(name="your mom", url="https://twitch.tv/Bawkworm"), description="Made with lots of sleep deprivation!", case_insensitive=True)
@@ -11,6 +11,7 @@ people = ""
 pingmsg = "This week these people asked to play MC: \n"
 points = {}
 send = True
+changelog = []
 buddy = False
 
 @bot.event
@@ -22,12 +23,14 @@ async def on_member_join(member):
   points[str(member.id)] = 0
 
 @bot.command(name="buddy-on", description="Buddy on")
+@commands.has_role("^^^——————{Mod Team}——————^^^")
 async def toggleON(ctx):
   global buddy
   buddy = True
   await ctx.send("Toggled on!")
 
 @bot.command(name="buddy-off", description="Buddy off")
+@commands.has_role("^^^——————{Mod Team}——————^^^")
 async def toggleOFF(ctx: commands.Context):
   global buddy
   buddy = False
@@ -35,22 +38,20 @@ async def toggleOFF(ctx: commands.Context):
 
 @bot.event
 async def on_message(message):
-  lineloc = []
+  msg = []
   send = True
   cont = message.content
   x = cont.lower()
-  msg = x.split(' ')
-  if '\n' in list(x):
-    msg.clear()
-    msg = list(x)
-    for i in range(len(list(x))):
-      if list(x)[i] == '\n':
-        lineloc.append(i)
-    msg = ''.join(msg)
-    for loc in lineloc:
-      msg = msg[:loc] + '-' + msg[loc:]
-    msg = msg.split(' ')
-
+  lb = list(x)
+  if '\n' in lb:
+    for i in range(len(lb) - lb.count('\n')):
+      if lb[i] == '\n':
+        lb.pop(i)
+        lb.insert(i, ' ')
+    msg = ''.join(lb).split(" ")
+  else:
+    msg = x.split(' ')
+    
   await bot.process_commands(message)
   guild = bot.get_guild(738532090865254422)
   for member in guild.members:
@@ -72,6 +73,7 @@ async def on_message(message):
   smpcount = 0
 
   for item in msg:
+    print(item)
     if item in value1:
       points[message.author.id] += 0.5
     if item in value2:
@@ -125,24 +127,36 @@ async def on_message(message):
       await anschan.send(f"<@{message.author.id}>'s SMP application! \n {' '.join(application)}")
 
 @bot.command(name="buddy", description="Pings everyone who asks to play")
+@commands.has_role("^^^——————{Mod Team}——————^^^")
 async def ping_week(ctx: commands.Context):
   people = ' '.join(ping)
   await ctx.send(pingmsg + people)
 
 @bot.command(name="clear", description="Clears the ping list")
+@commands.has_role("^^^——————{Mod Team}——————^^^")
 async def clear(ctx: commands.Context):
   ping.clear()
   await ctx.send("Cleared!")
 
-# @bot.command(name="ping")
-# async def pingy(ctx):
-#     await ctx.send(f'Pong! {round(bot.latency * 1000)}ms')
+@bot.command(name="pong")
+async def pingy(ctx):
+    await ctx.send(f'Ping! {round(bot.latency * 1000)}ms')
 
 
-# @bot.command(name="changelognotes")
-# async def cnotes(message, args):
-#   await message.channel.send(f'{message.author} : {args} , <t:{message.id}>')
+@bot.command(name="cnotes")
+@commands.has_role("^^^——————{Mod Team}——————^^^")
+async def cnotes(ctx, *, args):
+  channel = bot.get_channel(876552178888736789)
+  await channel.send(f'{ctx.author}: \nChanged: {args} \n This was done at <t:{int(time.time())}>')
+  changelog.append(f'{ctx.author}: Changed: {args}. This was done at <t:{int(time.time())}> \n')
+  print(f'{ctx.author}: Changed: {args}. This was done at <t:{int(time.time())}> \n')
   
+
+@bot.command(name="changelogger")
+@commands.has_role("^^^——————{Mod Team}——————^^^")
+async def changelogger(ctx):
+  channel = bot.get_channel(741419798897885304)
+  await channel.send(f'This weeks changelog! \n{"".join(changelog)}')
 
 keep_alive()
 bot.run(os.getenv("token"))
