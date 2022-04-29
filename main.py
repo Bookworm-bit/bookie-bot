@@ -6,9 +6,13 @@ from discord_slash import SlashCommand, SlashContext
 from discord_slash.utils.manage_commands import create_choice, create_option 
 import time
 from discord.ui import Button, View
+
+
 intents = discord.Intents().all()
 intents.members = True
+
 bot = commands.Bot(command_prefix="]", intents=intents, activity = discord.Streaming(name="your mom", url="https://twitch.tv/Bawkworm"), description="Made with lots of sleep deprivation!", case_insensitive=True)
+
 slash = SlashCommand(bot, sync_commands=True)
 ping = []
 people = ""
@@ -21,13 +25,16 @@ send = True
 changelog = []
 buddy = False
 
+
 @bot.event
 async def on_connect():
   print("connected")
 
+
 @bot.event
 async def on_member_join(member):
   points[str(member.id)] = 0
+
 
 @bot.command(name="buddy-on", description="Buddy on")
 @commands.has_role("^^^——————{Mod Team}——————^^^")
@@ -36,6 +43,7 @@ async def toggleON(ctx):
   buddy = True
   await ctx.send("Toggled on!")
 
+
 @bot.command(name="buddy-off", description="Buddy off")
 @commands.has_role("^^^——————{Mod Team}——————^^^")
 async def toggleOFF(ctx: commands.Context):
@@ -43,6 +51,7 @@ async def toggleOFF(ctx: commands.Context):
   buddy = False
   await ctx.send("Toggled off!")
 
+  
 @bot.event
 async def on_message(message):
   print(f'#{message.channel} - @{message.author} ({message.author.id}): {message.content}')
@@ -141,6 +150,7 @@ async def on_message(message):
       applicationEmbed = discord.Embed(title=f"{message.author}'s SMP Application'", description = f"{' '.join(application)} \nRecieved at <t:{round(time.time())}>", color=discord.Colour.green())
       await message.channel.send(embed=applicationEmbed)
 
+      
 @bot.command(name="buddy", description="Pings everyone who asks to play")
 @commands.has_role("^^^——————{Mod Team}——————^^^")
 async def ping_week(ctx):
@@ -157,16 +167,19 @@ async def ping_week(ctx):
   # view.add_item(clear)
   await ctx.send(embed=embeds)
 
+  
 @bot.command(name="clear", description="Clears the ping list")
 @commands.has_role("^^^——————{Mod Team}——————^^^")
 async def clear(ctx: commands.Context):
   ping.clear()
   await ctx.send("Cleared!")
 
+  
 @bot.command(name="pong")
 async def pingy(ctx):
     await ctx.send(f'Ping! {round(bot.latency * 1000)}ms')
 
+    
 @bot.command(name="cnotes")
 @commands.has_role("^^^——————{Mod Team}——————^^^")
 async def cnotes(ctx, *, args):
@@ -175,12 +188,14 @@ async def cnotes(ctx, *, args):
   changelog.append(f'{ctx.author}: Changed: {args}. This was done at <t:{int(time.time())}> \n')
   print(f'{ctx.author}: Changed: {args}. This was done at <t:{int(time.time())}> \n')
   
+  
 @bot.command(name="changelogger")
 @commands.has_role("^^^——————{Mod Team}——————^^^")
 async def changelogger(ctx):
   channel = bot.get_channel(741419798897885304)
   await channel.send(f'This weeks changelog! \n{"".join(changelog)}. Sent at <t:{round(time.time())}>!')
 
+  
 # @bot.command(name="testing")
 # async def testing(ctx):
 #   button1 = Button(label="Testing", style=discord.ButtonStyle.danger)
@@ -194,6 +209,7 @@ async def changelogger(ctx):
 
 #   await ctx.send("Hello", view=view)
 
+
 # @bot.command(name="stopwatch")
 # async def stopwatch(ctx):
 #   second = 0
@@ -206,20 +222,24 @@ async def changelogger(ctx):
 #     async def callback(interaction):
 #     await interaction.response.send_message("Hello")
 
+
 @bot.command(name="buddy-add")
 async def add(ctx, user: discord.User, *, args):
   ping.append(f'<@{user.id}>: "{args}" <t:{round(time.time())}> (Added by {ctx.author})\n')
   await ctx.send("Added!")
 
+  
 @bot.command(name="buddy-del")
 async def delete(ctx, args):
   ping.pop(int(args) - 1)
   await ctx.send("Deleted!")
 
+  
 # @bot.command(name="pingtag-add")
 # async def pingadd(ctx, user: discord.User):
 #   pingtagpart.append(user.id)
 #   await ctx.send("Added!")
+
 
 # @bot.command(name="pingtag-del")
 # async def pingdel(ctx, user: discord.User):
@@ -235,6 +255,7 @@ async def delete(ctx, args):
 #   await ctx.send("Started!")
 #   global pingtagevent
 #   pingtagevent = True
+
 
 # @bot.command(name="pingtag-end")
 # @commands.has_role("^^^——————{Mod Team}——————^^^")
